@@ -1,15 +1,22 @@
+// src/services/api/api.ts - CLEAN VERSION
 import axios from 'axios';
 
+// DIRECT HARDCODED URL - NO ENV VARIABLES
 const API_BASE_URL = 'http://localhost:5000/api';
+
+console.log('=== API SETUP ===');
+console.log('Using API URL:', API_BASE_URL);
+console.log('Backend should be running on port 5000');
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 5000,
 });
 
-// Request interceptor to add auth token
+// Simple interceptors
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
@@ -17,49 +24,38 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-  },
-  (error) => {
-    return Promise.reject(error);
   }
 );
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.message);
     if (error.response?.status === 401) {
-      // Clear token and redirect to login
-      localStorage.removeItem('access_token');
+      localStorage.clear();
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-// Auth API calls
+// APIs
 export const authAPI = {
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
   
-  register: (data: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    role?: string;
-    tenantId?: string;
-  }) => api.post('/auth/register', data),
+  register: (data: any) => api.post('/auth/register', data),
   
   getProfile: () => api.get('/auth/profile'),
   
-  updateProfile: (data: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  }) => api.put('/auth/profile', data),
+  updateProfile: (data: any) => api.put('/auth/profile', data),
+  
+  logout: () => {
+    localStorage.clear();
+    window.location.href = '/login';
+  },
 };
 
-// Tenants API calls
 export const tenantsAPI = {
   getAll: () => api.get('/tenants'),
   getById: (id: string) => api.get(`/tenants/${id}`),

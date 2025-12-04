@@ -28,6 +28,7 @@ const StaffPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRole, setSelectedRole] = useState('all');
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
 
     // Sample data

@@ -17,40 +17,80 @@ import AnalyticsDashboard from './modules/platform-admin/AnalyticsDashboard';
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthProvider>
         <TenantProvider>
-          <Toaster position="top-right" />
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
             {/* Protected Routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <MainLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<DashboardPage />} />
-              <Route path="dashboard" element={<Navigate to="/" replace />} />
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
 
               {/* Platform Admin Routes */}
-              <Route path="admin/tenants" element={
-                <ProtectedRoute requiredRole="super_admin">
-                  <TenantsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="admin/users" element={
-                <ProtectedRoute requiredRole="super_admin">
-                  <UsersPage />
-                </ProtectedRoute>
-              } />
-              <Route path="analytics" element={
-                <ProtectedRoute requiredRole="super_admin">
-                  <AnalyticsDashboard />
-                </ProtectedRoute>
-              } />
+              <Route 
+                path="admin/tenants" 
+                element={
+                  <ProtectedRoute requiredRole="super_admin">
+                    <TenantsPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/users" 
+                element={
+                  <ProtectedRoute requiredRole="super_admin">
+                    <UsersPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="analytics" 
+                element={
+                  <ProtectedRoute requiredRole="super_admin">
+                    <AnalyticsDashboard />
+                  </ProtectedRoute>
+                } 
+              />
 
               {/* Tenant Dashboard Routes */}
               <Route path="bookings" element={<BookingPage />} />
@@ -58,12 +98,15 @@ function App() {
               <Route path="products" element={<ProductsPage />} />
               <Route path="staff" element={<StaffPage />} />
               <Route path="settings" element={
-                <div className="p-6">Settings - Coming Soon</div>
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold mb-4">Settings</h1>
+                  <p>Settings page - Coming Soon</p>
+                </div>
               } />
             </Route>
 
             {/* 404 Route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </TenantProvider>
       </AuthProvider>
